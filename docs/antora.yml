@@ -1,5 +1,5 @@
-name: project-name
+name: ROOT
 version: ~
-title: Project Name
+title: Project Root
 nav:
 - docs/modules/ROOT/nav.adoc
