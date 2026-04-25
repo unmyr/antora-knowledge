@@ -3,6 +3,7 @@
         "adoc",
         "Antora",
         "Asciidoctor",
-        "autoremove"
+        "autoremove",
+        "latexmath"
     ]
 }
