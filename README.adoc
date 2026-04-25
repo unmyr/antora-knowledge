@@ -42,3 +42,85 @@ ui:
 output:
   dir: build
 ----
+
+### Install Node.js and npm
+
+[source,shell]
+----
+sudo apt install -y nodejs npm
+----
+
+. Install `n` to manage Node.js versions:
+
+[source,shell]
+----
+sudo npm install n -g
+----
+
+. Install the latest stable version of Node.js using `n`:
++
+[source,shell]
+----
+sudo n stable
+----
+
+// nパッケージの導入により不要になったNode.jsとnpmを削除
+. Uninstall the system-installed Node.js and npm, as they are no longer needed:
++
+[source,shell]
+----
+sudo apt purge -y nodejs npm
+sudo apt autoremove -y
+----
+
+### Install Antora locally
+
+See: https://docs.antora.org/antora/latest/install/install-antora/[Install Antora locally]
+
+Requires Node.js and npm.
+
+. Navigate to the `docs` directory:
++
+[source,shell]
+----
+cd docs
+----
+
+. Initialize a new npm project and install Antora CLI as a development dependency:
++
+[source,shell]
+----
+node -e "fs.writeFileSync('package.json', '{}')"
+npm i -D -E @antora/cli@3.1
+----
+
+. Verify the installation by checking the Antora version:
++
+[source,shell]
+----
+npx antora -v
+----
+
+. Install the Antora site generator as a development dependency:
++
+[source,shell]
+----
+npm i -D -E @antora/site-generator@3.1
+----
+
+## Build the documentation site
+. Run the Antora build command to generate the static site:
++
+[source,shell]
+----
+cd docs
+----
+
+. Build the site using the Antora playbook:
++
+[source,shell]
+----
+npx antora ../antora-playbook.yml
+----
+
+. The generated site will be located in the `dist` directory as specified in the `antora-playbook.yml` configuration:
