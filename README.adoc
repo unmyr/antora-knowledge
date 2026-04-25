@@ -1,0 +1,44 @@
+## Description
+
+
+## Setup Instructions
+
+### Repository Structure
+
+[source,plaintext]
+----
+repo/
+├── antora-playbook.yml
+├── site/
+│   └── ui/ ... the Antora UI files (Optional, can be customized)
+└── docs/
+    └── modules/
+        └── ROOT/
+            ├── pages/
+            │   └── index.adoc
+            └── nav.adoc
+----
+
+Minimal `antora-playbook.yml` configuration:
+
+[source,yaml]
+.antora-playbook.yml
+----
+site:
+  title: My Docs
+  start_page: ROOT:index
+
+content:
+  sources:
+    - url: .
+      branches: HEAD
+      start_path: docs
+
+ui:
+  bundle:
+    url: https://gitlab.com/antora/antora-ui-default/-/jobs/artifacts/main/raw/build/ui-bundle.zip?job=build
+    snapshot: true
+
+output:
+  dir: build
+----

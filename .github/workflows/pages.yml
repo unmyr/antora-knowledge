@@ -1,0 +1,56 @@
+name: Build and Deploy Antora Documentation to GitHub Pages
+
+on:
+  push:
+    branches: [ "main" ]
+
+permissions:
+  contents: read
+  pages: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
+jobs:
+  # Build the site by converting AsciiDoc files to HTML using Asciidoctor
+  build:
+    runs-on: ubuntu-latest
+    name: convert asciidoc to html
+    steps:
+    # Checkout the repository
+    # See: https://github.com/actions/checkout
+    - name: Checkout
+      uses: actions/checkout@v6
+
+    # See: https://github.com/actions/setup-node
+    - name: Install Node
+      uses: actions/setup-node@v6.4.0
+      with:
+        node-version: 24
+    - name: Install Antora
+      run: npm install -g @antora/cli @antora/site-generator-default
+
+    - name: Generate site
+      run: antora antora-playbook.yml
+
+    - name: Upload artifact
+      uses: actions/upload-pages-artifact@v3
+      with:
+        path: dist/
+
+  # Deploy to GitHub Pages
+  deploy:
+    needs: build
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy site to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

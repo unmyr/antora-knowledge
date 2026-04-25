@@ -1,0 +1,5 @@
+name: project-name
+version: ~
+title: Project Name
+nav:
+- docs/modules/ROOT/nav.adoc
