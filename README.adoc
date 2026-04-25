@@ -12,11 +12,11 @@ repo/
 ├── site/
 │   └── ui/ ... the Antora UI files (Optional, can be customized)
 └── docs/
+    ├── antora.yml
     └── modules/
-        └── ROOT/
-            ├── pages/
-            │   └── index.adoc
-            └── nav.adoc
+                ├── nav.adoc
+                └── pages
+                    └── index.adoc
 ----
 
 Minimal `antora-playbook.yml` configuration:
@@ -26,7 +26,7 @@ Minimal `antora-playbook.yml` configuration:
 ----
 site:
   title: My Docs
-  start_page: ROOT:index
+  start_page: home:ROOT:index.adoc
 
 content:
   sources:
@@ -36,12 +36,101 @@ content:
 
 ui:
   bundle:
-    url: https://gitlab.com/antora/antora-ui-default/-/jobs/artifacts/main/raw/build/ui-bundle.zip?job=build
+    url: https://gitlab.com/antora/antora-ui-default/-/jobs/artifacts/master/raw/build/ui-bundle.zip?job=bundle-stable
     snapshot: true
 
 output:
-  dir: build
+  dir: ../dist
 ----
+
+[source,yaml]
+.docs/antora.yml
+----
+name: home
+version: ~
+title: Project Root
+nav:
+- modules/ROOT/nav.adoc
+----
+
+[source,asciidoc]
+.docs/modules/ROOT/pages/index.adoc
+----
+= Welcome!
+
+You are home.
+
+----
+
+[source,asciidoc]
+.docs/modules/ROOT/nav.adoc
+----
+* xref:index.adoc[Home]
+----
+
+[source,yaml]
+..github/workflows/pages.yml
+----
+name: Build and Deploy Antora Documentation to GitHub Pages
+
+on:
+  push:
+    branches: [ "main" ]
+
+permissions:
+  contents: read
+  pages: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
+jobs:
+  # Build the site by converting AsciiDoc files to HTML using Asciidoctor
+  build:
+    runs-on: ubuntu-latest
+    name: convert asciidoc to html
+    steps:
+    # Checkout the repository
+    # See: https://github.com/actions/checkout
+    - name: Checkout
+      uses: actions/checkout@v6
+
+    # See: https://github.com/actions/setup-node
+    - name: Install Node
+      uses: actions/setup-node@v6.4.0
+      with:
+        node-version: 24
+    - name: Install Antora
+      run: npm install -g @antora/cli @antora/site-generator
+
+    - name: Generate site
+      working-directory: docs
+      run: antora ../antora-playbook.yml
+
+    - name: Upload artifact
+      uses: actions/upload-pages-artifact@v3
+      with:
+        path: dist/
+
+  # Deploy to GitHub Pages
+  deploy:
+    needs: build
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy site to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+----
+
+## Local Setup for Testing
 
 ### Install Node.js and npm
 

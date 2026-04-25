@@ -1,6 +1,6 @@
 site:
   title: My Docs
-  start_page: ROOT:ROOT:index.adoc
+  start_page: home:ROOT:index.adoc
 
 content:
   sources:
