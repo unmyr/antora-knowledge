@@ -3,3 +3,4 @@ version: ~
 title: Project Root
 nav:
 - modules/ROOT/nav.adoc
+- modules/math/nav.adoc

@@ -36,7 +36,8 @@ content:
 
 ui:
   bundle:
-    url: https://gitlab.com/antora/antora-ui-default/-/jobs/artifacts/master/raw/build/ui-bundle.zip?job=bundle-stable
+    # See: https://github.com/stephengold/antora-ui-bundle
+    url: https://github.com/stephengold/antora-ui-bundle/releases/download/v-sgold260101a/ui-bundle.zip
     snapshot: true
 
 output:
@@ -213,3 +214,60 @@ npx antora ../antora-playbook.yml
 ----
 
 . The generated site will be located in the `dist` directory as specified in the `antora-playbook.yml` configuration:
+
+
+### Customize the Antora UI (Optional)
+
+Here is an example of modifications for displaying mathematical equations.
+
+If you only want to verify the local operation, you can make the code changes as shown below to get it working. However, please consider how to incorporate the UI bundle in accordance with the license requirements of the distribution source.
+
+In practice, if you want to customize and distribute the Antora UI, you would download and extract the UI bundle, make the necessary changes, and either include the modified UI bundle in your own repository or host it on a CDN and specify the URL.
+
+[source,shell]
+----
+wget https://github.com/stephengold/antora-ui-bundle/releases/download/v-sgold260101a/ui-bundle.zip -O ui-bundle.zip
+----
+. Unzip the downloaded UI bundle and customize the files as needed:
++
+[source,shell]
+----
+unzip ui-bundle.zip -d docs/ui
+rm -f ui-bundle.zip
+----
+
+Change ui ≫ bundle ≫ url in `antora-playbook.yml` to point to your customized UI bundle.
+
+[source,yml]
+.antora-playbook.yml
+----
+site:
+  title: My Docs
+  start_page: home:ROOT:index.adoc
+
+content:
+  sources:
+    - url: .
+      branches: HEAD
+      start_path: docs
+
+ui:
+  bundle:
+    url: ./docs/ui
+    snapshot: true
+
+output:
+  dir: ../dist
+----
+
+[source,javascript]
+.docs/ui/antora-ui-default/partials/head-scripts.hbs
+----
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] },
+  svg: { fontCache: 'global' }
+};
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+----
